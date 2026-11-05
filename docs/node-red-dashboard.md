@@ -4,7 +4,21 @@ The importable flow is [`node-red/hostel-electricity-dashboard.json`](../node-re
 
 ## Requirements and import
 
-The flow was authored against Node-RED 5.0.9 and `@flowfuse/node-red-dashboard` 1.35.0 (the installed package at implementation time). In the editor at `http://127.0.0.1:1880`, use **Menu → Import → select a file**, choose the JSON flow, import it as a new flow, inspect the preview, and click **Import**. Deploy the new tab after import. The editor's existing tab and MQTT-to-Debug nodes are not part of the exported file.
+The flow was authored against Node-RED 5.0.9 and `@flowfuse/node-red-dashboard` 1.35.0 (the installed package at implementation time). For first-time setup, in the editor at `http://127.0.0.1:1880`, use **Menu → Import → select a file**, choose the JSON flow, import it as a new flow, inspect the preview, and deploy. The editor's existing tab and MQTT-to-Debug nodes are not part of the exported file.
+
+For updates, first export the deployed dashboard tab as a recovery copy. Create an update-only file by removing the tab node from the checked-in JSON while leaving IDs and `z` references unchanged:
+
+```bash
+python - <<'PY'
+import json
+from pathlib import Path
+nodes = json.loads(Path("node-red/hostel-electricity-dashboard.json").read_text())
+update = [node for node in nodes if node.get("type") != "tab"]
+Path("/tmp/hostel-electricity-dashboard-update.json").write_text(json.dumps(update, indent=2))
+PY
+```
+
+Import that temporary file into the current flow. When Node-RED shows ID conflicts, choose **View nodes**, replace the existing conflicting nodes/config nodes, and import the new nodes. Do not choose **Import copy**. Because the tab node is omitted and existing `z` IDs are preserved, the update targets the existing tab rather than adding a second tab. Verify the editor still has one dashboard tab before Deploy, then refresh the dashboard. `node-red/hostel-electricity-dashboard.backup.json` is the repository copy from before this formatting update; export the live tab as well if it has local edits.
 
 Dashboard URL: [http://127.0.0.1:1880/dashboard/hostel-electricity](http://127.0.0.1:1880/dashboard/hostel-electricity).
 
@@ -14,14 +28,16 @@ The broker config uses `127.0.0.1:1883`, MQTT 3.1.1, no credentials and no TLS f
 
 | Area | Behavior |
 | --- | --- |
-| Live readings | Gauge for mean total power (W; 0–6,000 range based on the supplied ECO EDA), chart with source timestamp labels, latest peak power, within-interval standard deviation, and occupancy percentage or Unknown. The chart retains at most 500 points. |
-| Anomaly Detection | Shows PENDING PREDICTION on each new reading until its linked prediction arrives. Then displays Isolation Forest NORMAL/ANOMALY, score, threshold, selected model variant, and the higher-score-means-more-unusual interpretation. Shows robust baseline output as a secondary comparator. |
-| Recent Anomaly Events | Table of at most 20 primary-model anomaly review candidates with timestamp, site, meter, score, threshold, model variant, and explanation. Repeated prediction event IDs do not duplicate table entries. |
+| Live readings | Gauge and adjacent exact readout for mean total power (W; 0–6,000 range based on the supplied ECO EDA), chart with source timestamp labels, latest peak power, within-interval standard deviation, and occupancy percentage or Unknown. Mean/peak/std are displayed to two decimals; occupancy uses at most one. The chart retains at most 500 points. |
+| Anomaly Detection | Shows amber PENDING PREDICTION until a linked prediction arrives, then green NORMAL or red ANOMALY. Isolation Forest score and threshold use four decimals and include the model variant and score direction. Robust score uses four decimals and is visually muted as a secondary comparator. A visible note says flags are candidates for review, not confirmed faults. |
+| Recent Anomaly Events | Readable, aligned table of at most 20 primary-model anomaly review candidates with timestamp, site, meter, score, threshold, model variant, and explanation. Numeric table values use four decimals; repeated prediction event IDs do not duplicate rows. |
 | MQTT Connection | Reports connection status for the Node-RED MQTT subscriptions. This is broker/subscription connectivity and does not prove that the independent ML service is connected or publishing. |
 
 ## Validation, correlation, and memory
 
 The common function node parses JSON/object input and validates the actual reading schema `2.0` and prediction schema `1.0`, required fields, numeric/boolean values, timezone-naive timestamp formatting, UUIDs, and topic/payload identifiers. Invalid messages are logged through Node-RED `node.warn` and ignored. Occupancy JSON `null` remains unknown and displays as Unknown.
+
+The latest power/peak/variability indicators use two decimal places; occupancy displays up to one decimal place and strips trailing `.0`. The gauge receives a rounded numeric value and an adjacent text readout preserves two decimal places (including trailing zeroes). Chart values are rounded to two decimals for display, but the source timestamp remains unchanged.
 
 Reading and prediction topics are independent. The function correlates on prediction `source_event_id` matching reading `event_id`, with site, meter and timestamp agreement. Predictions received first are held in a 500-entry bounded cache; recent readings are also bounded to 500. Delayed predictions for older readings can update the anomaly table but do not overwrite the latest-reading model status. The chart retains no more than 500 recent points, and recent anomaly rows are limited to 20.
 
