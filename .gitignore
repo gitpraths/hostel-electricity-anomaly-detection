@@ -28,6 +28,7 @@ data/processed/
 data/interim/
 data/external/
 *.zip
+# Local SQLite and other database files (including database/hostel_electricity.sqlite3)
 *.db
 *.sqlite
 *.sqlite3

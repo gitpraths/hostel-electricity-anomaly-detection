@@ -52,8 +52,32 @@ nullable occupancy behavior, score direction, event IDs, and QoS. Predictions
 carry the source reading event ID and a model version derived from the model
 artifact hash. Prediction IDs are stable for QoS redelivery of a reading under
 the same model. The service rejects unsupported reading schema versions and
-topic/payload identifier mismatches. It does not persist messages or predictions;
-a durable queue is outside this phase.
+topic/payload identifier mismatches. The separate SQLite receiver persists
+messages on Computer 1; no durable queue exists inside the inference service.
+
+## MQTT-to-SQLite receiver (Computer 1)
+
+Start the independent storage receiver with:
+
+```bash
+python -m mqtt.storage_service
+```
+
+It subscribes at QoS 1 to `hostel/v1/readings/+/+` and
+`hostel/v1/predictions/+/+`, validates each message, and stores it using
+`database.store.SQLiteStore`. The default path is
+`database/hostel_electricity.sqlite3`; configure it with `DATABASE_PATH`.
+The receiver defaults to loopback (`STORAGE_MQTT_HOST=127.0.0.1`) and does not
+add listeners or LAN configuration. Computer 2 has no database access or
+credentials; it only publishes predictions to the broker.
+
+The receiver uses manual MQTT acknowledgements. It acknowledges valid events
+only after the SQLite transaction commits, including duplicates that already
+have a durable row. Failed database writes remain unacknowledged so a persistent
+MQTT session can redeliver. Invalid messages are logged and acknowledged to
+prevent poison-message loops. Prediction rows arriving before readings retain
+`source_event_id` and acquire their nullable reading foreign-key link when the
+matching reading is stored.
 
 ## Tests
 

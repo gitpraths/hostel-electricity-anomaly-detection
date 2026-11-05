@@ -4,8 +4,8 @@ A modular two-computer system for learning normal electricity use and flagging
 unusual readings with occupancy and time context. ECO preprocessing and an
 initial unsupervised anomaly detection baseline are implemented. The ECO
 historical replay publisher is available under `iot/`, and `mqtt/` contains the
-ML inference subscriber and prediction publisher. Database, backend, and
-dashboard services remain future work.
+ML inference subscriber, prediction publisher, and MQTT-to-SQLite receiver.
+Node-RED and Streamlit remain future work.
 
 ## Project status
 
@@ -42,8 +42,10 @@ Phase 3B model setup and design are in [ML setup](docs/setup-ml.md) and
 For local ECO replay, see [the publisher instructions](iot/README.md) and the
 [MQTT payload contract](docs/mqtt-spec.md).
 For the inference service, see [MQTT service setup](mqtt/README.md). Local
-validation uses loopback; on Computer 2, set the broker host to Computer 1's
-reachable LAN address.
+validation uses loopback. Remote Computer 2 connectivity will require a later
+network configuration phase; no LAN listener is enabled now.
+Computer 1's SQLite receiver and schema are documented in [database setup](database/README.md);
+the database file remains local and Git-ignored.
 ML artifacts use validated feature schema `1.0.0`; keep the model and its JSON
 metadata sidecar together. See the ML setup guide for branch-specific threshold
 overrides and compatibility behavior.

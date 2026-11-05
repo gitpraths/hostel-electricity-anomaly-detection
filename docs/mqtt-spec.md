@@ -133,8 +133,20 @@ timestamp timezone is inferred from the ECO source.
 
 - QoS 1 for reading and prediction topics. Consumers deduplicate by `event_id`
   because QoS 1 can deliver duplicates.
-- Do not retain readings or predictions. A bounded local queue/store can be
-  designed for disconnect recovery in the implementation phase.
+- The Phase 4E Computer 1 receiver subscribes at QoS 1 and uses Paho manual
+  acknowledgements with a persistent client session. It acknowledges valid
+  events and duplicates only after SQLite commit; failed database writes are
+  left unacknowledged for redelivery. Malformed/schema-invalid events are logged
+  and acknowledged to avoid poison-message loops.
+- Readings and predictions are non-retained. SQLite uses unique event IDs and
+  `ON CONFLICT DO NOTHING`, so redelivery does not overwrite stored data.
+- Prediction rows preserve `source_event_id`. If a prediction arrives first,
+  it is committed with an unresolved nullable `source_reading_event_id`; when
+  the matching reading arrives, a transaction links it using the reading event
+  ID foreign key. The original `source_event_id` remains unchanged.
+- MQTT and SQLite do not form one distributed transaction. Manual ACK plus QoS 1
+  provides at-least-once delivery within broker session limits; if an ACK is
+  lost after a successful commit, deduplication makes broker redelivery safe.
 - Retained status messages should include schema version, status, and timestamp;
   Last Will and Testament can report unexpected disconnection.
 - The current inference service scores one 15-minute (900-second) interval per

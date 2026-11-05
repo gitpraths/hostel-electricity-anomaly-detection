@@ -11,11 +11,11 @@ Computer 1 broker     <- MQTT predictions <- Computer 2 detector
         +-> later: persistence (SQLite pilot) -> dashboard/backend
 ```
 
-Mosquitto runs on Computer 1. Both computers connect using a configured,
-network-reachable hostname/IP and port. The broker host must be reachable from
-Computer 2 and its firewall must permit MQTT traffic. Use TLS and authenticated
-broker accounts beyond a trusted local network; do not expose an unauthenticated
-broker to the public internet.
+Mosquitto runs on Computer 1. For the current local phases it remains on
+loopback (`127.0.0.1:1883`); no LAN listener or firewall opening is added. The
+two-computer network configuration remains future deployment work. Before that
+work, plan authenticated broker accounts and TLS for untrusted networks; never
+expose an unauthenticated broker to the public internet.
 
 ## Selected stack
 
@@ -36,8 +36,8 @@ Add dependencies only when an implementation phase needs them.
 ## Service boundaries
 
 - **Computer 1:** broker and reading source (physical gateway or the Phase 4C
-  historical ECO replay simulator); later prediction receiver, database, and
-  dashboard.
+  historical ECO replay simulator), plus Phase 4E SQLite storage receiver;
+  later prediction UI, database consumers, and dashboard.
 - **Computer 2:** ECO preprocessing, model training/evaluation, model loading,
   reading subscriber and prediction publisher (`mqtt.inference_service`).
 - **Local Phase 4D validation:** broker, reading publisher, and inference
@@ -45,6 +45,8 @@ Add dependencies only when an implementation phase needs them.
   the ML service remains portable to Computer 2 and must then use Computer 1's
   reachable LAN address rather than localhost.
 - MQTT schemas in `mqtt-spec.md` define the machine-to-machine boundary.
+- Computer 2 sends predictions only over MQTT; it does not open or receive
+  credentials for Computer 1's SQLite file.
 - Model files are deployment artifacts transferred separately, not committed.
   Include model version, feature schema, preprocessing version, data selection,
   and threshold metadata.
@@ -58,7 +60,8 @@ interface fixture must be named and described as synthetic, never as ECO data.
 
 ## Reliability and security
 
-- Use MQTT QoS 1 for reading and prediction events; deduplicate by `event_id`.
+- Use MQTT QoS 1 for reading and prediction events; the storage receiver uses
+  manual acknowledgements after SQLite commit and deduplicates by `event_id`.
 - Do not retain readings or predictions. Retained status messages are allowed.
 - Keep credentials in local environment configuration or a secret manager.
 - Restrict broker access with firewall rules; add broker authentication and TLS

@@ -28,19 +28,21 @@ unlabelled chronological evaluation. See `model-evaluation.md`. No confirmed
 anomaly labels are available; flags remain review signals rather than confirmed
 faults.
 
-## Phase 4 — MQTT broker and message clients (local implementation complete)
+## Phase 4A–4E — MQTT and local storage (local implementation complete)
 
 Phases 4A–4B established the broker and local communication; Phase 4C adds the
 historical ECO replay publisher; Phase 4D adds the ML inference subscriber and
-prediction publisher. A local Mac end-to-end smoke test passed. The two-computer
-deployment still needs validation when Computer 2 is available. No durable
-queue, prediction receiver, database, or dashboard is included.
+prediction publisher; Phase 4E adds the Computer 1 MQTT receiver and SQLite
+storage. The receiver stores QoS 1 messages transactionally, deduplicates by
+event ID, and resolves out-of-order prediction-to-reading links. Broker and
+services remain local-loopback only. The two-computer deployment still needs
+validation when Computer 2 is available. Node-RED and Streamlit are not included.
 
 ## Phase 5 — Persistence and service boundary
 
-Add a data-access layer and SQLite storage on Computer 1 for readings,
-predictions, and alert state. Keep transport and storage logic separate from the
-model and UI. Reassess PostgreSQL only if operating needs justify it.
+Review database backups, retention, and migration strategy before expanding the
+SQLite schema. Keep transport and storage logic separate from the model and UI.
+Reassess PostgreSQL only if operating needs justify it.
 
 ## Phase 6 — Dashboard and alerts
 
