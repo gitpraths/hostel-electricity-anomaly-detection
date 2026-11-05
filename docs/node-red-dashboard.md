@@ -4,21 +4,16 @@ The importable flow is [`node-red/hostel-electricity-dashboard.json`](../node-re
 
 ## Requirements and import
 
-The flow was authored against Node-RED 5.0.9 and `@flowfuse/node-red-dashboard` 1.35.0 (the installed package at implementation time). For first-time setup, in the editor at `http://127.0.0.1:1880`, use **Menu → Import → select a file**, choose the JSON flow, import it as a new flow, inspect the preview, and deploy. The editor's existing tab and MQTT-to-Debug nodes are not part of the exported file.
+The flow was authored against Node-RED 5.0.9 and `@flowfuse/node-red-dashboard` 1.35.0 (the installed package at implementation time). For first-time setup only, in the editor at `http://127.0.0.1:1880`, use **Menu → Import → select a file**, choose the JSON flow, import it as a new flow, inspect the preview, and deploy. The editor's existing tab and MQTT-to-Debug nodes are not part of the exported file.
 
-For updates, first export the deployed dashboard tab as a recovery copy. Create an update-only file by removing the tab node from the checked-in JSON while leaving IDs and `z` references unchanged:
+For an already-installed dashboard, do not import the polished JSON or an update-only copy through the editor. Import can create a second set of nodes; matching IDs are not a safe replacement mechanism. The checked-in flow is already polished. For a future file-based update, first stop Node-RED gracefully, save a fresh copy of `~/.node-red/flows.json`, run the migration script's dry-run and inspect its report, then apply only after approval:
 
 ```bash
-python - <<'PY'
-import json
-from pathlib import Path
-nodes = json.loads(Path("node-red/hostel-electricity-dashboard.json").read_text())
-update = [node for node in nodes if node.get("type") != "tab"]
-Path("/tmp/hostel-electricity-dashboard-update.json").write_text(json.dumps(update, indent=2))
-PY
+python scripts/migrate_node_red_dashboard.py --prepared-backup "$HOME/.node-red/flows.backup.dashboard-polish-prep-YYYYMMDDTHHMMSSZ.json"
+python scripts/migrate_node_red_dashboard.py --apply --prepared-backup "$HOME/.node-red/flows.backup.dashboard-polish-prep-YYYYMMDDTHHMMSSZ.json"
 ```
 
-Import that temporary file into the current flow. When Node-RED shows ID conflicts, choose **View nodes**, replace the existing conflicting nodes/config nodes, and import the new nodes. Do not choose **Import copy**. Because the tab node is omitted and existing `z` IDs are preserved, the update targets the existing tab rather than adding a second tab. Verify the editor still has one dashboard tab before Deploy, then refresh the dashboard. `node-red/hostel-electricity-dashboard.backup.json` is the repository copy from before this formatting update; export the live tab as well if it has local edits.
+The `--prepared-backup` path must be the exact reviewed snapshot; apply mode refuses if `flows.json` has changed since that snapshot. Apply mode creates another non-overwriting backup, atomically replaces the flow file, validates the result, and restores the backup on validation failure. It does not restart Node-RED or deploy. After a successful apply, start Node-RED again; it loads the configured flow file automatically. See [`scripts/migrate_node_red_dashboard.py`](../scripts/migrate_node_red_dashboard.py) for safeguards and report details.
 
 Dashboard URL: [http://127.0.0.1:1880/dashboard/hostel-electricity](http://127.0.0.1:1880/dashboard/hostel-electricity).
 
@@ -39,7 +34,7 @@ The common function node parses JSON/object input and validates the actual readi
 
 The latest power/peak/variability indicators use two decimal places; occupancy displays up to one decimal place and strips trailing `.0`. The gauge receives a rounded numeric value and an adjacent text readout preserves two decimal places (including trailing zeroes). Chart values are rounded to two decimals for display, but the source timestamp remains unchanged.
 
-Reading and prediction topics are independent. The function correlates on prediction `source_event_id` matching reading `event_id`, with site, meter and timestamp agreement. Predictions received first are held in a 500-entry bounded cache; recent readings are also bounded to 500. Delayed predictions for older readings can update the anomaly table but do not overwrite the latest-reading model status. The chart retains no more than 500 recent points, and recent anomaly rows are limited to 20.
+Reading and prediction topics are independent. The function correlates on prediction `source_event_id` matching reading `event_id`, with site, meter and timestamp agreement. Predictions received first are held in a 500-entry bounded cache; an anomaly is added to the review table only after its matching reading is available and all correlation fields agree. Delayed predictions for older readings can update the anomaly table but do not overwrite the latest-reading model status. The chart retains no more than 500 recent points, and recent anomaly rows are limited to 20. Duplicate prediction deliveries are deduplicated by prediction event ID and source reading ID.
 
 The source ECO timestamps have no verified timezone. They are shown as the original timestamp strings on a categorical chart axis, avoiding an implied UTC conversion or replacement with current time. The dashboard state is in memory and is not an archival interface. SQLite is not exposed to widgets; no API or backend was added.
 
@@ -55,7 +50,7 @@ python -m iot.publisher --replay-delay 0.25
 
 For a short fast demonstration use `python -m iot.publisher --replay-delay 0.01 --max-records 10`. The publisher emits historical ECO replay messages. It is not a live electricity meter. If model artifacts or the processed Parquet are not present locally, the corresponding publisher/inference command cannot run until those existing project artifacts are supplied.
 
-Example walkthrough: a schema 2.0 reading at `2012-12-24T17:45:00` with `powerallphases_mean_w: 322.6`, `powerallphases_max_w: 402.7`, `powerallphases_std_w: 25.3`, and `occupancy_fraction: null` updates the gauge, chart, peak, variability, and occupancy widgets; occupancy reads **Unknown** and model status reads **PENDING PREDICTION**. A later schema 1.0 prediction whose `source_event_id` equals that reading's `event_id` updates model status, score/threshold/variant, and robust comparator. If `anomaly` is true, it adds the prediction's timestamp/site/meter/score/threshold/model variant/explanation to the bounded table. This is a message-flow example; the prediction value is not fabricated as a project result.
+Example walkthrough: a schema 2.0 reading at `2012-12-24T17:45:00` with `powerallphases_mean_w: 322.6`, `powerallphases_max_w: 402.7`, `powerallphases_std_w: 25.3`, and `occupancy_fraction: null` updates the gauge, chart, peak, variability, and occupancy widgets; occupancy reads **Unknown** and model status reads **PENDING PREDICTION**. A schema 1.0 prediction is correlated only when its `source_event_id` equals the reading's `event_id` and its timestamp, site and meter also agree. A linked prediction updates model status, score/threshold/variant, and robust comparator. Only a linked prediction with `anomaly: true` adds its timestamp/site/meter/score/threshold/model variant/explanation to the bounded table. This is a message-flow example; the prediction value is not fabricated as a project result.
 
 ## Future LAN deployment and limitations
 

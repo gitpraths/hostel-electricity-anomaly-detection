@@ -4,22 +4,21 @@ This phase provides an importable Node-RED Dashboard 2.0 flow for monitoring the
 
 ## Import and open
 
-For a first-time installation, start the local broker and Node-RED editor, import `node-red/hostel-electricity-dashboard.json` as a new flow, review the preview, and deploy.
+For a first-time installation, start the local broker and Node-RED editor, import `node-red/hostel-electricity-dashboard.json` as a new flow, review the preview, and deploy. This is not the update procedure for an already-installed dashboard.
 
-For an update to the already-deployed flow, **do not import the full file as a new flow**. First export the current deployed tab as an additional recovery copy. Then generate an update file without the tab node, keeping existing IDs and `z` references:
+For an already-installed dashboard, do not import the polished JSON or an update-only copy through the editor. An import can add a duplicate set of nodes; matching IDs do not safely replace the live nodes. The polished flow is already present in this repository. For a future approved file migration, stop Node-RED gracefully, create a fresh snapshot of `~/.node-red/flows.json`, and prepare/inspect the candidate with the migration script:
 
 ```bash
-python - <<'PY'
-import json
-from pathlib import Path
-source = Path("node-red/hostel-electricity-dashboard.json")
-nodes = json.loads(source.read_text())
-update = [node for node in nodes if node.get("type") != "tab"]
-Path("/tmp/hostel-electricity-dashboard-update.json").write_text(json.dumps(update, indent=2))
-PY
+python scripts/migrate_node_red_dashboard.py --prepared-backup "$HOME/.node-red/flows.backup.dashboard-polish-prep-YYYYMMDDTHHMMSSZ.json"
 ```
 
-In Node-RED choose **Menu → Import → select a file**, select `/tmp/hostel-electricity-dashboard-update.json`, and import into the current flow. If Node-RED reports ID conflicts, choose **View nodes**; replace the conflicting existing nodes/config nodes with the imported versions and keep the new nodes selected for import. Do not choose **Import copy**. The update file contains no tab node, so the deployed dashboard tab is preserved and no second tab is created. Review the canvas, verify there is still one **Hostel Electricity Monitoring** tab, then Deploy. Refresh the dashboard URL. The repository backup at `node-red/hostel-electricity-dashboard.backup.json` is the pre-edit flow; export the live editor first too if you have made local changes since deploying it.
+After explicit approval, apply against that same snapshot:
+
+```bash
+python scripts/migrate_node_red_dashboard.py --apply --prepared-backup "$HOME/.node-red/flows.backup.dashboard-polish-prep-YYYYMMDDTHHMMSSZ.json"
+```
+
+Apply mode creates a fresh backup, refuses if the live file differs from the reviewed snapshot, writes atomically, validates, and restores the backup if post-write validation fails. It does not restart or deploy Node-RED. Restart Node-RED after a successful update so it loads the configured flow file. See [`docs/node-red-dashboard.md`](../docs/node-red-dashboard.md) for details.
 
 Dashboard URL: [http://127.0.0.1:1880/dashboard/hostel-electricity](http://127.0.0.1:1880/dashboard/hostel-electricity).
 
