@@ -1,0 +1,41 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python environments, caches, and build output
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+
+# Local data and generated artifacts
+# Raw ECO exports are stored here in this checkout; keep the component docs tracked.
+/database/01/
+/database/01_occupancy_csv (1)/
+data/raw/
+data/processed/
+data/interim/
+data/external/
+*.zip
+*.db
+*.sqlite
+*.sqlite3
+models/
+artifacts/
+logs/
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

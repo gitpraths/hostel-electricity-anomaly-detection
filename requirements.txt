@@ -1,0 +1,7 @@
+# Initial cross-platform Python stack for later phases.
+# Mosquitto is installed separately; SQLite is included with Python.
+pandas
+scikit-learn
+paho-mqtt
+streamlit
+pyarrow
