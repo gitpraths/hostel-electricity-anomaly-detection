@@ -33,6 +33,7 @@ and the [roadmap](docs/roadmap.md).
 
 For the ECO Household 1 data workflow, see the [inspection report](docs/dataset-inspection.md),
 [preprocessing instructions](docs/preprocessing.md), and [processed data dictionary](docs/data-dictionary.md).
+The [Phase 3A EDA report](docs/eda-report.md) documents exploratory findings and feature recommendations.
 
 ## Configuration and dependencies
 
