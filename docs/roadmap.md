@@ -25,14 +25,16 @@ verified distributions, context analysis, and the chronological split proposal.
 `ml/` provides date-grouped training-only Isolation Forest variants,
 training-derived cutoffs, a contextual robust baseline, inference, and
 unlabelled chronological evaluation. See `model-evaluation.md`. No confirmed
-anomaly labels are available; review is needed before treating flags as
-operational alerts or proceeding to MQTT integration.
+anomaly labels are available; flags remain review signals rather than confirmed
+faults.
 
-## Phase 4 — MQTT broker and message clients
+## Phase 4 — MQTT broker and message clients (local implementation complete)
 
-Configure Mosquitto on Computer 1 with access control. Implement its reading
-publisher/simulator and Computer 2 prediction subscriber/publisher against the
-documented schema, QoS, reconnect behavior, and duplicate handling.
+Phases 4A–4B established the broker and local communication; Phase 4C adds the
+historical ECO replay publisher; Phase 4D adds the ML inference subscriber and
+prediction publisher. A local Mac end-to-end smoke test passed. The two-computer
+deployment still needs validation when Computer 2 is available. No durable
+queue, prediction receiver, database, or dashboard is included.
 
 ## Phase 5 — Persistence and service boundary
 

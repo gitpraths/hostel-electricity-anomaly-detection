@@ -28,5 +28,9 @@ Computer 2 must be able to route to Computer 1's broker host and port. Confirm
 those values with the Computer 1 owner. Never put credentials in shell history,
 shared documents, or committed files.
 
-Phase 1 provides design and setup guidance only. Preprocessing, training, and
-MQTT clients are not implemented yet.
+The ML MQTT inference service is started with `python -m mqtt.inference_service`
+from the repository root. It loads `ML_MODEL_PATH` and the matching metadata
+sidecar, subscribes to the configured readings topic, and publishes predictions.
+Set `ML_MQTT_HOST` to Computer 1's reachable LAN address on this computer; do
+not use localhost here. See `mqtt/README.md` and `docs/mqtt-spec.md` for the
+service contract. No database or dashboard is included in this phase.

@@ -35,10 +35,15 @@ Add dependencies only when an implementation phase needs them.
 
 ## Service boundaries
 
-- **Computer 1:** broker, reading source (simulator or meter gateway),
-  prediction receiver, operational database, dashboard.
+- **Computer 1:** broker and reading source (physical gateway or the Phase 4C
+  historical ECO replay simulator); later prediction receiver, database, and
+  dashboard.
 - **Computer 2:** ECO preprocessing, model training/evaluation, model loading,
-  live prediction subscriber, prediction publisher.
+  reading subscriber and prediction publisher (`mqtt.inference_service`).
+- **Local Phase 4D validation:** broker, reading publisher, and inference
+  service can run on the developer Mac via loopback. This is for testing only;
+  the ML service remains portable to Computer 2 and must then use Computer 1's
+  reachable LAN address rather than localhost.
 - MQTT schemas in `mqtt-spec.md` define the machine-to-machine boundary.
 - Model files are deployment artifacts transferred separately, not committed.
   Include model version, feature schema, preprocessing version, data selection,
