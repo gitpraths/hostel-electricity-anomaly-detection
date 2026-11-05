@@ -33,7 +33,12 @@ const warnings = [];
 const node = {warn:message => warnings.push(message)};
 const messages = JSON.parse(fs.readFileSync(0, 'utf8'));
 const outputs = messages.map(message => invoke(message, flow, node, Buffer));
-process.stdout.write(JSON.stringify({outputs, recent:state.get('dashboard_recent_anomalies') || [], warnings}));
+process.stdout.write(JSON.stringify({
+  outputs,
+  recent:state.get('dashboard_recent_anomalies') || [],
+  currentReadingId:state.get('dashboard_current_reading_id') || null,
+  warnings
+}));
 """
 
 
@@ -214,3 +219,57 @@ def test_new_linked_anomaly_updates_the_table_in_newest_first_order(node_binary:
         reading(1)["event_id"],
     ]
     assert len(result["outputs"][-1][8]["payload"]) == 2
+
+
+def test_ten_interval_chronological_replay_leaves_final_reading_and_prediction_visible(
+    node_binary: str,
+) -> None:
+    """Regression for the observed 00:00 first-row sticking in the live dashboard."""
+    means = [63.693534, 83.670772, 63.018952, 71.191698, 142.448114,
+             103.964622, 146.616123, 99.956022, 55.819847, 78.396089]
+    maxima = [125.868, 84.858, 83.783, 961.223, 145.694,
+              140.045, 249.007, 190.778, 84.008, 146.700]
+    deviations = [15.554639, 0.386995, 14.239270, 47.484068, 2.085156,
+                  9.598319, 48.356621, 31.511109, 8.606968, 24.830705]
+    scores = [0.419896, 0.427559, 0.420361, 0.483783, 0.421366,
+              0.402161, 0.438237, 0.416938, 0.424777, 0.404265]
+    messages = []
+    for number in range(1, 11):
+        item = reading(number)
+        item.update(
+            powerallphases_mean_w=means[number - 1],
+            powerallphases_max_w=maxima[number - 1],
+            powerallphases_std_w=deviations[number - 1],
+        )
+        result = prediction(
+            number,
+            number,
+            anomaly=False,
+            score=scores[number - 1],
+            threshold=0.589912,
+        )
+        messages.extend(
+            [
+                as_message(READING_TOPIC, item),
+                as_message(PREDICTION_TOPIC, result),
+            ]
+        )
+
+    result = run_function(node_binary, messages)
+    final_reading = reading(10)
+    reading_outputs = result["outputs"][::2]
+    assert len(reading_outputs) == 10
+    assert reading_outputs[0][0]["payload"] == 63.69
+    assert reading_outputs[-1][0]["payload"] == 78.40
+    assert reading_outputs[-1][9]["payload"] == "78.40 W"
+    assert reading_outputs[-1][1]["payload"] == {
+        "x": "2012-07-15T02:15:00",
+        "y": 78.40,
+    }
+    assert reading_outputs[-1][2]["payload"] == "146.70 W"
+    assert reading_outputs[-1][3]["payload"] == "24.83 W"
+    assert result["currentReadingId"] == final_reading["event_id"]
+    assert result["outputs"][-1][5]["payload"] == "NORMAL"
+    assert "0.4043" in result["outputs"][-1][6]["payload"]
+    assert result["recent"] == []
+    assert result["warnings"] == []
