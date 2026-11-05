@@ -67,14 +67,23 @@ and out of Git. The current Phase 2 workflow uses the supplied Household 1
 export; additional household/export formats require inspection before ingestion
 changes.
 
-## Running the complete system
+## Running the complete local system
 
-For local monitoring, start Mosquitto and run `python -m mqtt.storage_service`,
-`python -m mqtt.inference_service`, and `python -m iot.publisher` in separate
-terminals. Import the flow in `node-red/hostel-electricity-dashboard.json` and
-open `http://127.0.0.1:1880/dashboard/hostel-electricity`. See
-[Node-RED dashboard instructions](docs/node-red-dashboard.md). The broker and
-services remain loopback-only; LAN setup is a separate deployment task.
+Use the sequential, five-terminal startup and reverse-order shutdown commands
+in [Computer 1 setup](docs/setup-computer-1.md). In brief: start the loopback-only
+Mosquitto broker, Node-RED, SQLite receiver, ML inference service, run the
+read-only health check, then start the historical ECO publisher. The health
+check validates local artifacts, completes an MQTT connect handshake without
+publishing, checks the dashboard HTTP endpoint, and opens SQLite read-only.
+Service readiness is confirmed by each service's `... ready` log line.
+
+The current Mac demo needs the existing processed Parquet and trained model plus
+sidecar; it does not download or change source ECO data or retrain the model.
+The dashboard widgets and correlation cache are in memory and reset on a
+Node-RED restart, while SQLite records persist. Node-RED loads its configured
+flow file when it starts; do not redeploy just to reload flows after a restart.
+See [Node-RED dashboard instructions](docs/node-red-dashboard.md). This Phase 6
+workflow remains local-only; moving inference to a second computer is deferred.
 
 ## GitHub preparation
 

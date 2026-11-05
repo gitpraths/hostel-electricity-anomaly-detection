@@ -1,4 +1,4 @@
-# Preliminary architecture
+# System architecture
 
 ## Roles and data flow
 
@@ -38,8 +38,10 @@ and Dashboard 2.0 are installed separately from Python dependencies.
 
 ## Service boundaries
 
-- **Computer 1:** broker, Phase 4C historical ECO replay simulator, Phase 4E
-  SQLite storage receiver, and Phase 4F Node-RED Dashboard 2.0 subscriber.
+- **Computer 1 (current single-Mac configuration):** loopback broker, Phase 4C
+  historical ECO replay simulator, Phase 4E SQLite storage receiver, ML
+  inference service for local validation, and Phase 4F Node-RED Dashboard 2.0
+  subscriber. The local workflow runs all services on this Mac today.
 - **Computer 2:** ECO preprocessing, model training/evaluation, model loading,
   reading subscriber and prediction publisher (`mqtt.inference_service`).
 - **Local Phase 4D validation:** broker, reading publisher, and inference
@@ -56,10 +58,11 @@ and Dashboard 2.0 are installed separately from Python dependencies.
 
 ## Dataset principles
 
-No raw ECO data is included or presumed downloaded. Implement ingestion after
-inspecting selected authorized exports. Preserve source files locally, exclude
-them from Git, and document provenance in processed outputs. Any synthetic
-interface fixture must be named and described as synthetic, never as ECO data.
+The Household 1 export has been inspected and its preprocessing pipeline is
+implemented. Raw ECO data and processed Parquet files remain local and are
+excluded from Git. Preserve source files unchanged, use selected authorized
+exports, and document provenance in processed outputs. Any synthetic interface
+fixture must be named and described as synthetic, never as ECO data.
 
 ## Reliability and security
 

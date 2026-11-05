@@ -7,3 +7,5 @@ streamlit
 pyarrow
 matplotlib
 joblib
+# Test runner for the repository's automated suite.
+pytest

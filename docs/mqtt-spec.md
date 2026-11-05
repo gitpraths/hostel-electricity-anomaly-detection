@@ -8,8 +8,8 @@ reachable hostname/IP; do not use `localhost` on Computer 2. Development port:
 
 | Topic | Publisher | Subscriber | Purpose |
 | --- | --- | --- | --- |
-| `hostel/v1/readings/{site_id}/{meter_id}` | Computer 1 publisher/gateway | Computer 2 inference service; Computer 1 persistence (future) | Electricity observation stream. |
-| `hostel/v1/predictions/{site_id}/{meter_id}` | Computer 2 inference service | Computer 1 prediction receiver/dashboard service (future) | Model score and anomaly decision for a reading. |
+| `hostel/v1/readings/{site_id}/{meter_id}` | Computer 1 publisher/gateway | ML inference service; Computer 1 SQLite receiver and Node-RED dashboard | Electricity observation stream. |
+| `hostel/v1/predictions/{site_id}/{meter_id}` | ML inference service | Computer 1 SQLite receiver and Node-RED dashboard | Model score and anomaly decision for a reading. |
 | `hostel/v1/status/{service_id}` | Each service | Monitoring clients | Health state; retained message is allowed. |
 
 Identifiers are URL-safe and are not secrets. Do not publish occupant names or
@@ -133,7 +133,7 @@ timestamp timezone is inferred from the ECO source.
 
 - QoS 1 for reading and prediction topics. Consumers deduplicate by `event_id`
   because QoS 1 can deliver duplicates.
-- The Phase 4E Computer 1 receiver subscribes at QoS 1 and uses Paho manual
+- The Computer 1 SQLite receiver subscribes at QoS 1 and uses Paho manual
   acknowledgements with a persistent client session. It acknowledges valid
   events and duplicates only after SQLite commit; failed database writes are
   left unacknowledged for redelivery. Malformed/schema-invalid events are logged
