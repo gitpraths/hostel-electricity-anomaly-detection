@@ -12,15 +12,21 @@ CSV layout is documented in `dataset-inspection.md`; reusable validation and
 15-minute aggregation live in `data/preprocess_eco.py`. The generated
 `dataset-validation-report.md` records the actual run. The initial processed
 dataset uses 79 clean matched days and excludes six matching days containing
-the `-1` sentinel. No model has been trained. New household/export formats need
-their own inspection before ingestion changes.
+the `-1` sentinel. New household/export formats need their own inspection before
+ingestion changes.
 
-## Phase 3 — Model baseline and evaluation (next; requires approval)
+## Phase 3A — Exploratory data analysis (complete)
 
-Train an Isolation Forest baseline on normal training-period behavior, compare
-appropriate baselines, define score semantics and thresholds, and evaluate with
-temporal splits and suitable metrics. Save model metadata and reproducible
-training configuration.
+See `eda-report.md` and reproducible figures under `reports/figures/` for
+verified distributions, context analysis, and the chronological split proposal.
+
+## Phase 3B — Unsupervised baseline (implemented; review required)
+
+`ml/` provides date-grouped training-only Isolation Forest variants,
+training-derived cutoffs, a contextual robust baseline, inference, and
+unlabelled chronological evaluation. See `model-evaluation.md`. No confirmed
+anomaly labels are available; review is needed before treating flags as
+operational alerts or proceeding to MQTT integration.
 
 ## Phase 4 — MQTT broker and message clients
 

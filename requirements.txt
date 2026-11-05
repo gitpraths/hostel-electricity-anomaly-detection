@@ -6,3 +6,4 @@ paho-mqtt
 streamlit
 pyarrow
 matplotlib
+joblib

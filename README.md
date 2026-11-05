@@ -1,15 +1,15 @@
 # Hostel Electricity Anomaly Detection
 
 A modular two-computer system for learning normal electricity use and flagging
-unusual readings with occupancy and time context. This is the Phase 1 foundation:
-architecture and operating documentation only. There is no running model, MQTT
-client, database, backend, or dashboard yet.
+unusual readings with occupancy and time context. ECO preprocessing and an
+initial unsupervised anomaly detection baseline are implemented. MQTT, database,
+backend, and dashboard services remain future phases.
 
 ## Project status
 
-- ETH Zurich's ECO Electricity Consumption & Occupancy dataset is the intended
-  source. Selected exports are being arranged; no data is bundled or presumed
-  available locally.
+- The supplied ETH Zurich ECO Household 1 export has been inspected and
+  preprocessed. Raw files and the processed Parquet remain local and are ignored
+  by Git; they must be obtained separately to reproduce analysis.
 - Any future synthetic fixture will be clearly labelled and kept distinct from
   real ECO observations.
 - Raw data, local configuration, secrets, databases, and generated model files
@@ -34,6 +34,12 @@ and the [roadmap](docs/roadmap.md).
 For the ECO Household 1 data workflow, see the [inspection report](docs/dataset-inspection.md),
 [preprocessing instructions](docs/preprocessing.md), and [processed data dictionary](docs/data-dictionary.md).
 The [Phase 3A EDA report](docs/eda-report.md) documents exploratory findings and feature recommendations.
+Phase 3B model setup and design are in [ML setup](docs/setup-ml.md) and
+[baseline details](docs/ml-baseline.md), with actual evaluation results in
+[model evaluation](docs/model-evaluation.md).
+ML artifacts use validated feature schema `1.0.0`; keep the model and its JSON
+metadata sidecar together. See the ML setup guide for branch-specific threshold
+overrides and compatibility behavior.
 
 ## Configuration and dependencies
 
@@ -42,15 +48,15 @@ stack is listed in `requirements.txt`; install Mosquitto separately on Computer
 1. Copy `.env.example` to `.env` on each machine and configure `MQTT_HOST` as
 Computer 1's reachable address. Never commit real credentials.
 
-This phase does not install or execute these packages; application entry points
-will be added in later phases.
+Install dependencies with `python -m pip install -r requirements.txt` inside
+your virtual environment. Mosquitto is installed separately on Computer 1.
 
 ## Dataset handling
 
-Place only authorized selected ECO exports under `data/raw/eco/` when received.
-Keep originals unchanged and out of Git. Record each export's household, date
-range, signals, provenance, and transformations. Preprocessing will follow the
-actual export format; no full archive or particular file layout is assumed.
+Keep authorized ECO originals in their existing raw-data locations, unchanged
+and out of Git. The current Phase 2 workflow uses the supplied Household 1
+export; additional household/export formats require inspection before ingestion
+changes.
 
 ## Running the complete system
 
