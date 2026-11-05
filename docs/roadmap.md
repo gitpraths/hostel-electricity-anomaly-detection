@@ -28,27 +28,31 @@ unlabelled chronological evaluation. See `model-evaluation.md`. No confirmed
 anomaly labels are available; flags remain review signals rather than confirmed
 faults.
 
-## Phase 4A–4E — MQTT and local storage (local implementation complete)
+## Phase 4A–4F — MQTT, local storage, and live dashboard (local implementation complete)
 
 Phases 4A–4B established the broker and local communication; Phase 4C adds the
 historical ECO replay publisher; Phase 4D adds the ML inference subscriber and
 prediction publisher; Phase 4E adds the Computer 1 MQTT receiver and SQLite
 storage. The receiver stores QoS 1 messages transactionally, deduplicates by
 event ID, and resolves out-of-order prediction-to-reading links. Broker and
-services remain local-loopback only. The two-computer deployment still needs
-validation when Computer 2 is available. Node-RED and Streamlit are not included.
+services remain local-loopback only. Phase 4F adds an importable Node-RED Dashboard 2.0
+flow for local live monitoring; the two-computer deployment still needs validation
+when Computer 2 is available. Streamlit is not included.
 
-## Phase 5 — Persistence and service boundary
+## Phase 5 — Operational deployment and hardening
 
-Review database backups, retention, and migration strategy before expanding the
-SQLite schema. Keep transport and storage logic separate from the model and UI.
-Reassess PostgreSQL only if operating needs justify it.
+Validate the two-computer broker/service boundary when Computer 2 is available.
+Decide on broker authentication/TLS, listener binding, firewall policy, Node-RED
+access security, SQLite backup/retention, migration, and recovery. Keep transport
+and storage separate from the model and UI; reassess PostgreSQL only if operating
+needs justify it. The local Node-RED flow has no durable dashboard state or
+historical database API.
 
-## Phase 6 — Dashboard and alerts
+## Phase 6 — Optional dashboard extensions and alerts
 
-Build the Streamlit dashboard for readings, occupancy context, predictions, and
-anomaly history. Agree on notification channels and alert deduplication before
-enabling external notifications.
+Assess whether persistent historical views or Streamlit add value beyond the
+Node-RED live dashboard. Agree on notification channels and alert deduplication
+before enabling external notifications.
 
 ## Phase 7 — Reproducible deployment and handoff
 

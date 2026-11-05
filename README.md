@@ -5,7 +5,7 @@ unusual readings with occupancy and time context. ECO preprocessing and an
 initial unsupervised anomaly detection baseline are implemented. The ECO
 historical replay publisher is available under `iot/`, and `mqtt/` contains the
 ML inference subscriber, prediction publisher, and MQTT-to-SQLite receiver.
-Node-RED and Streamlit remain future work.
+A Node-RED Dashboard 2.0 flow is implemented for local live monitoring; Streamlit remains out of scope.
 
 ## Project status
 
@@ -19,8 +19,8 @@ Node-RED and Streamlit remain future work.
 
 ## Planned system
 
-**Computer 1 (IoT/MQTT Mac):** Mosquitto broker, later a reading
-publisher/simulator, prediction receiver, operational storage, and dashboard.
+**Computer 1 (IoT/MQTT Mac):** Mosquitto broker, ECO historical replay
+publisher, MQTT-to-SQLite receiver, and Node-RED Dashboard 2.0.
 
 **Computer 2 (ML laptop):** selected ECO export preprocessing and training,
 then a live MQTT reading subscriber and prediction publisher.
@@ -31,7 +31,7 @@ appropriate only between services on the same computer.
 
 See [architecture](docs/architecture.md), [MQTT specification](docs/mqtt-spec.md),
 [Computer 1 setup](docs/setup-computer-1.md), [Computer 2 setup](docs/setup-computer-2.md),
-and the [roadmap](docs/roadmap.md).
+the [roadmap](docs/roadmap.md), and [Node-RED dashboard instructions](docs/node-red-dashboard.md).
 
 For the ECO Household 1 data workflow, see the [inspection report](docs/dataset-inspection.md),
 [preprocessing instructions](docs/preprocessing.md), and [processed data dictionary](docs/data-dictionary.md).
@@ -69,12 +69,15 @@ changes.
 
 ## Running the complete system
 
-End-to-end commands will be documented when services are implemented. For now,
-use the per-computer setup documents to prepare the environments and network
-configuration.
+For local monitoring, start Mosquitto and run `python -m mqtt.storage_service`,
+`python -m mqtt.inference_service`, and `python -m iot.publisher` in separate
+terminals. Import the flow in `node-red/hostel-electricity-dashboard.json` and
+open `http://127.0.0.1:1880/dashboard/hostel-electricity`. See
+[Node-RED dashboard instructions](docs/node-red-dashboard.md). The broker and
+services remain loopback-only; LAN setup is a separate deployment task.
 
 ## GitHub preparation
 
-This workspace is not initialized as a Git repository yet. Suggested first
-commit commands are included in the Phase 1 handoff. Review `.gitignore` and
-check staged files before committing.
+This workspace is a Git repository with the GitHub remote configured. Before
+committing, review `git status` and `.gitignore`; raw/processed datasets, model
+artifacts, local databases, environment files, and credentials must stay untracked.

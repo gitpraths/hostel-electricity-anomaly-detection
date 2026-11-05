@@ -3,12 +3,15 @@
 ## Roles and data flow
 
 ```text
-Selected ECO exports -> Computer 2 preprocessing/training -> local model artifact
-                                                               |
-Computer 1 publisher -> MQTT readings -> Computer 2 detector  |
-Computer 1 broker     <- MQTT predictions <- Computer 2 detector
-        |
-        +-> later: persistence (SQLite pilot) -> dashboard/backend
+Computer 1 (Mac)
+  ECO replay publisher ──┐
+  Node-RED dashboard ────┼── MQTT broker (127.0.0.1:1883 in local phase)
+  SQLite receiver ───────┘           │
+                                     ├── readings ──> Computer 2 ML service
+                                     └── predictions <── Computer 2 ML service
+
+Node-RED subscribes to readings and predictions directly. SQLite stores both
+streams independently; the dashboard does not access the database.
 ```
 
 Mosquitto runs on Computer 1. For the current local phases it remains on
@@ -26,25 +29,25 @@ expose an unauthenticated broker to the public internet.
 | Python MQTT client | Paho MQTT | Established Python publish/subscribe client. |
 | Initial anomaly baseline | scikit-learn Isolation Forest | Unsupervised baseline while features and labels are assessed; validate features and threshold on real ECO exports before operational use. |
 | Operational store | SQLite pilot | No separate server and included with Python; suitable for a single-host pilot. Consider PostgreSQL only if concurrency, scale, or remote operations require it. |
-| Dashboard | Streamlit | Lightweight Python monitoring UI with few added dependencies; keep data access separate so the UI can change later. |
+| Dashboard | Node-RED Dashboard 2.0 | Uses the existing Node-RED install and consumes MQTT directly; keeps the live UI separate from SQLite and the ML service. |
 | Configuration | Environment variables and local `.env` for development | Keeps machine-specific addresses and credentials out of source; `.env` is ignored. |
 
-The initial Python stack is listed in `requirements.txt`. Mosquitto is installed
-as an operating-system service, and SQLite needs no external database server.
-Add dependencies only when an implementation phase needs them.
+The Python stack is listed in `requirements.txt`. Mosquitto is installed as an
+operating-system service, and SQLite needs no external database server. Node-RED
+and Dashboard 2.0 are installed separately from Python dependencies.
 
 ## Service boundaries
 
-- **Computer 1:** broker and reading source (physical gateway or the Phase 4C
-  historical ECO replay simulator), plus Phase 4E SQLite storage receiver;
-  later prediction UI, database consumers, and dashboard.
+- **Computer 1:** broker, Phase 4C historical ECO replay simulator, Phase 4E
+  SQLite storage receiver, and Phase 4F Node-RED Dashboard 2.0 subscriber.
 - **Computer 2:** ECO preprocessing, model training/evaluation, model loading,
   reading subscriber and prediction publisher (`mqtt.inference_service`).
 - **Local Phase 4D validation:** broker, reading publisher, and inference
   service can run on the developer Mac via loopback. This is for testing only;
   the ML service remains portable to Computer 2 and must then use Computer 1's
   reachable LAN address rather than localhost.
-- MQTT schemas in `mqtt-spec.md` define the machine-to-machine boundary.
+- MQTT schemas in `mqtt-spec.md` define the machine-to-machine boundary. The
+  live dashboard subscribes directly to both topics; it does not query SQLite.
 - Computer 2 sends predictions only over MQTT; it does not open or receive
   credentials for Computer 1's SQLite file.
 - Model files are deployment artifacts transferred separately, not committed.

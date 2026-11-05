@@ -1,7 +1,7 @@
 # Computer 1 setup — IoT, MQTT, and monitoring host
 
 Computer 1 is the Mac. It hosts Mosquitto, the ECO historical replay publisher,
-and the Phase 4E SQLite storage receiver. Node-RED and Streamlit are later work.
+the Phase 4E SQLite storage receiver, and the Phase 4F Node-RED Dashboard 2.0.
 
 1. Install Python 3.11 or newer and Git.
 2. Install Eclipse Mosquitto on macOS using its official installation method.
@@ -25,3 +25,7 @@ The receiver creates the configured SQLite file, subscribes to reading and
 prediction topics, and stores them independently of the ML service. The database
 is not shared with Computer 2. See `database/README.md` for schema and
 transaction behavior, and `roadmap.md` for remaining work.
+
+## Node-RED dashboard
+
+Node-RED and Dashboard 2.0 must be installed separately. Import `node-red/hostel-electricity-dashboard.json` as a new flow from the editor, deploy that tab, and open `http://127.0.0.1:1880/dashboard/hostel-electricity`. Keep Node-RED and Mosquitto on localhost for this phase. See [dashboard guide](node-red-dashboard.md) for widget behavior and the three-terminal replay test.

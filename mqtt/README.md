@@ -87,3 +87,10 @@ python -m pytest -q
 
 The service tests use a fake detector and mocked MQTT client; they require
 neither a running broker nor the ECO Parquet file.
+
+## Node-RED dashboard (Computer 1)
+
+The live monitoring UI is a separately imported Node-RED Dashboard 2.0 flow; it
+subscribes to both message streams directly and does not read from SQLite. See
+[`docs/node-red-dashboard.md`](../docs/node-red-dashboard.md) for import, URL,
+correlation, bounds, and local replay instructions.

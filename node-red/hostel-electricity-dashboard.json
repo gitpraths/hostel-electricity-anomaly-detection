@@ -1,0 +1,685 @@
+[
+  {
+    "id": "e645f300346a4657",
+    "type": "tab",
+    "label": "Hostel Electricity Monitoring",
+    "disabled": false,
+    "info": "Phase 4F dashboard; separate tab; imports without replacing existing flows.",
+    "env": []
+  },
+  {
+    "id": "b01c3a41855c4377",
+    "type": "mqtt-broker",
+    "name": "Hostel Mosquitto (local)",
+    "broker": "127.0.0.1",
+    "port": "1883",
+    "clientid": "",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": 4,
+    "keepalive": 60,
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthRetain": "false",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closeRetain": "false",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willRetain": "false",
+    "willPayload": "",
+    "willMsg": {},
+    "userProps": "",
+    "sessionExpiry": ""
+  },
+  {
+    "id": "145f0795d62e4648",
+    "type": "ui-base",
+    "name": "Hostel Electricity Monitoring",
+    "path": "/dashboard",
+    "appIcon": "",
+    "includeClientData": true,
+    "acceptsClientConfig": [
+      "ui-notification",
+      "ui-control"
+    ],
+    "showPathInSidebar": false,
+    "headerContent": "page",
+    "navigationStyle": "default",
+    "titleBarStyle": "fixed",
+    "showReconnectNotification": true,
+    "notificationDisplayTime": 3,
+    "showDisconnectNotification": true,
+    "allowInstall": false
+  },
+  {
+    "id": "f106e96a124548a4",
+    "type": "ui-theme",
+    "name": "Hostel Energy",
+    "colors": {
+      "surface": "#ffffff",
+      "primary": "#0f766e",
+      "bgPage": "#f4f7f8",
+      "groupBg": "#ffffff",
+      "groupOutline": "#d8e2e5"
+    },
+    "sizes": {
+      "density": "comfortable",
+      "pagePadding": "16px",
+      "groupGap": "16px",
+      "groupBorderRadius": "12px",
+      "widgetGap": "12px"
+    }
+  },
+  {
+    "id": "2923ac50c4d14145",
+    "type": "ui-page",
+    "name": "Live Monitoring",
+    "ui": "145f0795d62e4648",
+    "path": "/hostel-electricity",
+    "icon": "flash",
+    "layout": "grid",
+    "theme": "f106e96a124548a4",
+    "breakpoints": [
+      {
+        "name": "Default",
+        "px": 0,
+        "cols": 3
+      },
+      {
+        "name": "Tablet",
+        "px": 576,
+        "cols": 6
+      },
+      {
+        "name": "Small Desktop",
+        "px": 768,
+        "cols": 9
+      },
+      {
+        "name": "Desktop",
+        "px": 1024,
+        "cols": 12
+      }
+    ],
+    "order": 1,
+    "visible": "true",
+    "disabled": "false"
+  },
+  {
+    "id": "f683792a4c89447e",
+    "type": "ui-group",
+    "name": "Live Readings",
+    "page": "2923ac50c4d14145",
+    "width": 12,
+    "height": 1,
+    "order": 1,
+    "showTitle": true,
+    "className": "",
+    "visible": true,
+    "disabled": false,
+    "groupType": "default",
+    "keepLoaded": false,
+    "tab": ""
+  },
+  {
+    "id": "b7203704f222496e",
+    "type": "ui-group",
+    "name": "Anomaly Detection",
+    "page": "2923ac50c4d14145",
+    "width": 12,
+    "height": 1,
+    "order": 2,
+    "showTitle": true,
+    "className": "",
+    "visible": true,
+    "disabled": false,
+    "groupType": "default",
+    "keepLoaded": false,
+    "tab": ""
+  },
+  {
+    "id": "1b7ae57c6bad43cf",
+    "type": "ui-group",
+    "name": "Recent Anomaly Events",
+    "page": "2923ac50c4d14145",
+    "width": 12,
+    "height": 1,
+    "order": 3,
+    "showTitle": true,
+    "className": "",
+    "visible": true,
+    "disabled": false,
+    "groupType": "default",
+    "keepLoaded": false,
+    "tab": ""
+  },
+  {
+    "id": "f07d102b06f14a19",
+    "type": "ui-group",
+    "name": "MQTT Connection",
+    "page": "2923ac50c4d14145",
+    "width": 12,
+    "height": 1,
+    "order": 4,
+    "showTitle": true,
+    "className": "",
+    "visible": true,
+    "disabled": false,
+    "groupType": "default",
+    "keepLoaded": false,
+    "tab": ""
+  },
+  {
+    "id": "0c997bff253b422d",
+    "type": "mqtt in",
+    "z": "e645f300346a4657",
+    "name": "Readings \u00b7 QoS 1",
+    "topic": "hostel/v1/readings/+/+",
+    "qos": "1",
+    "datatype": "auto-detect",
+    "broker": "b01c3a41855c4377",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 200,
+    "y": 200,
+    "wires": [
+      [
+        "79f06a994f154f3e"
+      ]
+    ]
+  },
+  {
+    "id": "692bf35269324cbb",
+    "type": "mqtt in",
+    "z": "e645f300346a4657",
+    "name": "Predictions \u00b7 QoS 1",
+    "topic": "hostel/v1/predictions/+/+",
+    "qos": "1",
+    "datatype": "auto-detect",
+    "broker": "b01c3a41855c4377",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 200,
+    "y": 260,
+    "wires": [
+      [
+        "79f06a994f154f3e"
+      ]
+    ]
+  },
+  {
+    "id": "79f06a994f154f3e",
+    "type": "function",
+    "z": "e645f300346a4657",
+    "name": "Validate \u00b7 correlate \u00b7 format widgets",
+    "func": "// Validate both MQTT message contracts, correlate predictions by source event ID,\n// and emit updates to the dashboard outputs in this fixed order:\n// 0 gauge, 1 chart, 2 peak, 3 variability, 4 occupancy, 5 anomaly,\n// 6 model score/threshold, 7 robust comparator, 8 recent anomalies.\nconst MAX_CACHE = 500;\nconst MAX_ANOMALIES = 20;\nconst uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nfunction fail(message) { throw new Error(message); }\nfunction finite(value, field) {\n    if (typeof value !== 'number' || !Number.isFinite(value)) fail(field + ' must be a finite JSON number');\n    return value;\n}\nfunction identifier(value, field) {\n    if (typeof value !== 'string' || !/^[A-Za-z0-9_-]+$/.test(value)) fail(field + ' must be an identifier');\n    return value;\n}\nfunction parsePayload(input) {\n    let value = input;\n    if (Buffer.isBuffer(value)) value = value.toString('utf8');\n    if (typeof value === 'string') {\n        try { value = JSON.parse(value); } catch (_) { fail('invalid JSON'); }\n    }\n    if (!value || typeof value !== 'object' || Array.isArray(value)) fail('payload must be a JSON object');\n    return value;\n}\nfunction topicIdentity(topic, kind) {\n    const parts = String(topic || '').split('/');\n    if (parts.length !== 5 || parts[0] !== 'hostel' || parts[1] !== 'v1' || parts[2] !== kind) fail('topic does not match ' + kind + ' contract');\n    return {site: parts[3], meter: parts[4]};\n}\nfunction validateReading(topic, p) {\n    const id = topicIdentity(topic, 'readings');\n    if (p.schema_version !== '2.0') fail('unsupported reading schema_version');\n    if (typeof p.event_id !== 'string' || !uuidPattern.test(p.event_id)) fail('event_id must be a UUID');\n    for (const [key, value] of [['site_id', id.site], ['meter_id', id.meter]]) {\n        if (identifier(p[key], key) !== value) fail(key + ' does not match topic');\n    }\n    if (typeof p.timestamp !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$/.test(p.timestamp)) fail('timestamp must be timezone-naive ISO local timestamp');\n    if (typeof p.date !== 'string' || typeof p.time_of_day !== 'string' || p.timestamp !== p.date + 'T' + p.time_of_day) fail('timestamp/date/time_of_day disagree');\n    const date = new Date(p.timestamp + 'Z');\n    if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0,19) !== p.timestamp) fail('timestamp is not a valid calendar time');\n    const second = finite(p.interval_start_second, 'interval_start_second');\n    if (!Number.isInteger(second) || second < 0 || second >= 86400) fail('interval_start_second outside [0, 86400)');\n    if (!Number.isInteger(p.hour) || p.hour !== Math.floor(second / 3600)) fail('hour does not match interval_start_second');\n    if (p.time_of_day !== String(Math.floor(second/3600)).padStart(2,'0') + ':' + String(Math.floor(second/60)%60).padStart(2,'0') + ':' + String(second%60).padStart(2,'0')) fail('time_of_day does not match interval_start_second');\n    if (p.interval_seconds !== 900) fail('interval_seconds must be 900 for this model stream');\n    finite(p.powerallphases_mean_w, 'powerallphases_mean_w');\n    finite(p.powerallphases_max_w, 'powerallphases_max_w');\n    finite(p.powerallphases_std_w, 'powerallphases_std_w');\n    if (p.occupancy_fraction !== null) {\n        finite(p.occupancy_fraction, 'occupancy_fraction');\n        if (p.occupancy_fraction < 0 || p.occupancy_fraction > 1) fail('occupancy_fraction must be in [0,1] or null');\n    }\n    if (typeof p.source !== 'string') fail('source must be a string');\n    return {site_id:id.site, meter_id:id.meter};\n}\nfunction validatePrediction(topic, p) {\n    const id = topicIdentity(topic, 'predictions');\n    if (p.schema_version !== '1.0') fail('unsupported prediction schema_version');\n    if (typeof p.event_id !== 'string' || !uuidPattern.test(p.event_id)) fail('prediction event_id must be a UUID');\n    if (typeof p.source_event_id !== 'string' || !uuidPattern.test(p.source_event_id)) fail('source_event_id must be a UUID');\n    if (identifier(p.site_id, 'site_id') !== id.site || identifier(p.meter_id, 'meter_id') !== id.meter) fail('payload IDs do not match topic');\n    if (typeof p.timestamp !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$/.test(p.timestamp)) fail('timestamp must be timezone-naive ISO local timestamp');\n    const date = new Date(p.timestamp + 'Z');\n    if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0,19) !== p.timestamp) fail('timestamp is not a valid calendar time');\n    for (const field of ['model_version','feature_schema_version','model_variant','explanation']) if (typeof p[field] !== 'string') fail(field + ' must be a string');\n    if (typeof p.anomaly !== 'boolean' || typeof p.robust_anomaly !== 'boolean') fail('anomaly flags must be booleans');\n    finite(p.score, 'score'); finite(p.threshold, 'threshold'); finite(p.robust_score, 'robust_score');\n    return {site_id:id.site, meter_id:id.meter};\n}\nfunction putBounded(map, key, value) {\n    map[key] = value;\n    const keys = Object.keys(map);\n    while (keys.length > MAX_CACHE) delete map[keys.shift()];\n}\nfunction latestPredictionWidgets(p) {\n    const anomalyColor = p.anomaly ? '#b42318' : '#137333';\n    const anomaly = {payload:p.anomaly ? 'ANOMALY' : 'NORMAL', ui_update:{color:anomalyColor, fontSize:24}};\n    const score = {payload:'Isolation Forest: ' + p.score.toFixed(4) + '  |  Threshold: ' + p.threshold.toFixed(4) + '  |  Model: ' + p.model_variant + '  |  Higher score = more unusual'};\n    const robust = {payload:'Secondary robust comparator: ' + (p.robust_anomaly ? 'ANOMALY' : 'NORMAL') + '  |  Score: ' + p.robust_score.toFixed(3)};\n    return [null,null,null,null,null,anomaly,score,robust,null];\n}\nfunction addAnomaly(p, recent) {\n    if (p.anomaly && !recent.some(item => item.event_id === p.event_id)) {\n        recent.unshift({event_id:p.event_id,timestamp:p.timestamp,site_id:p.site_id,meter_id:p.meter_id,score:p.score.toFixed(4),threshold:p.threshold.toFixed(4),model_variant:p.model_variant,explanation:p.explanation});\n        recent.splice(MAX_ANOMALIES);\n    }\n    return recent;\n}\nconst outputs = Array(9).fill(null);\ntry {\n    const p = parsePayload(msg.payload);\n    if (String(msg.topic || '').startsWith('hostel/v1/readings/')) {\n        const ids = validateReading(msg.topic, p);\n        const reading = {...p, ...ids};\n        const readings = flow.get('dashboard_readings') || {};\n        const predictions = flow.get('dashboard_predictions') || {};\n        const recent = flow.get('dashboard_recent_anomalies') || [];\n        putBounded(readings, reading.event_id, reading);\n        flow.set('dashboard_readings', readings);\n        const occupancy = reading.occupancy_fraction === null ? 'Unknown (occupancy not supplied)' : (reading.occupancy_fraction * 100).toFixed(1) + '% occupied';\n        outputs[0] = {payload:reading.powerallphases_mean_w};\n        outputs[1] = {topic:'historical-mean-power',payload:{x:reading.timestamp,y:reading.powerallphases_mean_w}};\n        outputs[2] = {payload:reading.powerallphases_max_w.toFixed(1) + ' W'};\n        outputs[3] = {payload:reading.powerallphases_std_w.toFixed(1) + ' W'};\n        outputs[4] = {payload:occupancy};\n        outputs[5] = {payload:'PENDING PREDICTION',ui_update:{color:'#9a6700',fontSize:20}};\n        outputs[6] = {payload:'Waiting for a prediction for this reading'};\n        outputs[7] = {payload:'Secondary robust comparator: waiting for prediction'};\n        outputs[8] = {payload:recent};\n        const match = predictions[reading.event_id];\n        if (match && match.site_id === reading.site_id && match.meter_id === reading.meter_id && match.timestamp === reading.timestamp) {\n            const latest = latestPredictionWidgets(match);\n            for (let i=5;i<=7;i++) outputs[i] = latest[i];\n        }\n        flow.set('dashboard_current_reading_id', reading.event_id);\n        return outputs;\n    }\n    if (String(msg.topic || '').startsWith('hostel/v1/predictions/')) {\n        validatePrediction(msg.topic, p);\n        const readings = flow.get('dashboard_readings') || {};\n        const predictions = flow.get('dashboard_predictions') || {};\n        const recent = flow.get('dashboard_recent_anomalies') || [];\n        putBounded(predictions, p.source_event_id, p);\n        flow.set('dashboard_predictions', predictions);\n        const updatedRecent = addAnomaly(p, recent);\n        flow.set('dashboard_recent_anomalies', updatedRecent);\n        const currentId = flow.get('dashboard_current_reading_id');\n        const source = readings[p.source_event_id];\n        if (source && source.site_id === p.site_id && source.meter_id === p.meter_id && source.timestamp === p.timestamp && currentId === p.source_event_id) {\n            const latest = latestPredictionWidgets(p);\n            for (let i=5;i<=7;i++) outputs[i] = latest[i];\n        }\n        outputs[8] = {payload:updatedRecent};\n        return outputs;\n    }\n    fail('unexpected topic');\n} catch (err) {\n    node.warn('Dashboard ignored invalid MQTT message on ' + String(msg.topic || '(unknown topic)') + ': ' + err.message);\n    return null;\n}",
+    "outputs": 9,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 520,
+    "y": 230,
+    "wires": [
+      [
+        "21141ac6b4254bc7"
+      ],
+      [
+        "beef18440de44a48"
+      ],
+      [
+        "fc1c715529d24da6"
+      ],
+      [
+        "ee2a26e7cbc74d16"
+      ],
+      [
+        "36e083fb31ac4e53"
+      ],
+      [
+        "062f645619b54e31"
+      ],
+      [
+        "7eebd2e66d4d4f9a"
+      ],
+      [
+        "9644628cdee3400f"
+      ],
+      [
+        "1cd51364240d4b33"
+      ]
+    ]
+  },
+  {
+    "id": "4eaf8b7b0e344056",
+    "type": "status",
+    "z": "e645f300346a4657",
+    "name": "Broker status only",
+    "scope": [
+      "0c997bff253b422d",
+      "692bf35269324cbb"
+    ],
+    "x": 210,
+    "y": 350,
+    "wires": [
+      [
+        "38320caa2cf54652"
+      ]
+    ]
+  },
+  {
+    "id": "38320caa2cf54652",
+    "type": "function",
+    "z": "e645f300346a4657",
+    "name": "Explain MQTT connection status",
+    "func": "const s = msg.status || {};\nif (!msg.status) {\n    msg.payload = 'Waiting for MQTT connection status. MQTT connectivity alone does not confirm that the ML service is publishing predictions.';\n    msg.ui_update = {color:'#9a6700'};\n    return msg;\n}\nconst text = typeof s.text === 'string' && s.text ? s.text : 'MQTT status unavailable';\nconst fill = String(s.fill || '').toLowerCase();\nconst shape = String(s.shape || '').toLowerCase();\nconst connected = !/disconnect|not connected|closed|error/i.test(text) && (/^connected\\b/i.test(text) || (fill === 'green' && shape === 'dot'));\nmsg.payload = (connected ? 'Broker connected \u2014 ' : 'Broker disconnected \u2014 ') + text + '. This confirms broker connectivity only; it does not confirm that the ML service is publishing predictions.';\nmsg.ui_update = {color: connected ? '#137333' : '#b42318'};\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 500,
+    "y": 350,
+    "wires": [
+      [
+        "27999503a19c4a9b"
+      ]
+    ]
+  },
+  {
+    "id": "21141ac6b4254bc7",
+    "type": "ui-gauge",
+    "z": "e645f300346a4657",
+    "name": "Current power",
+    "group": "f683792a4c89447e",
+    "order": 1,
+    "value": "payload",
+    "valueType": "msg",
+    "width": 4,
+    "height": 4,
+    "gtype": "gauge-half",
+    "gstyle": "needle",
+    "title": "Current Power Consumption",
+    "alwaysShowTitle": true,
+    "floatingTitlePosition": "top-left",
+    "units": "W",
+    "icon": "lightning-bolt",
+    "prefix": "",
+    "suffix": "",
+    "segments": [
+      {
+        "from": 0,
+        "color": "#0f766e",
+        "text": "Typical",
+        "textType": "label"
+      },
+      {
+        "from": 2000,
+        "color": "#f59e0b",
+        "text": "Elevated",
+        "textType": "label"
+      },
+      {
+        "from": 4000,
+        "color": "#dc2626",
+        "text": "High",
+        "textType": "label"
+      }
+    ],
+    "min": 0,
+    "max": 6000,
+    "sizeThickness": 18,
+    "sizeGap": 4,
+    "sizeKeyThickness": 8,
+    "styleRounded": true,
+    "styleGlow": false,
+    "className": "",
+    "x": 900,
+    "y": 120,
+    "wires": []
+  },
+  {
+    "id": "beef18440de44a48",
+    "type": "ui-chart",
+    "z": "e645f300346a4657",
+    "group": "f683792a4c89447e",
+    "name": "Historical ECO replay power",
+    "label": "Power Consumption Over Time",
+    "order": 2,
+    "chartType": "line",
+    "category": "Historical replay",
+    "categoryType": "str",
+    "xAxisLabel": "Source interval timestamp (timezone unspecified)",
+    "xAxisProperty": "x",
+    "xAxisPropertyType": "property",
+    "xAxisType": "category",
+    "xAxisFormat": "",
+    "xAxisFormatType": "auto",
+    "yAxisLabel": "Mean total power (W)",
+    "yAxisProperty": "y",
+    "yAxisPropertyType": "property",
+    "ymin": "",
+    "ymax": "",
+    "action": "append",
+    "stackSeries": false,
+    "pointShape": "circle",
+    "pointRadius": 2,
+    "showLegend": false,
+    "removeOlder": 0,
+    "removeOlderUnit": "3600",
+    "removeOlderPoints": 500,
+    "colors": [
+      "#0f766e"
+    ],
+    "textColor": [
+      "#666666"
+    ],
+    "textColorDefault": true,
+    "gridColor": [
+      "#e5e5e5"
+    ],
+    "gridColorDefault": true,
+    "width": 8,
+    "height": 7,
+    "className": "",
+    "interpolation": "linear",
+    "x": 900,
+    "y": 180,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "fc1c715529d24da6",
+    "type": "ui-text",
+    "z": "e645f300346a4657",
+    "group": "f683792a4c89447e",
+    "name": "Peak power",
+    "label": "Latest interval peak",
+    "order": 3,
+    "width": 6,
+    "height": 1,
+    "format": "{{msg.payload}}",
+    "layout": "row-spread",
+    "style": false,
+    "font": "Helvetica, sans-serif",
+    "fontSize": 16,
+    "color": "#344054",
+    "wrapText": true,
+    "className": "",
+    "value": "payload",
+    "valueType": "msg",
+    "x": 900,
+    "y": 535,
+    "wires": []
+  },
+  {
+    "id": "ee2a26e7cbc74d16",
+    "type": "ui-text",
+    "z": "e645f300346a4657",
+    "group": "f683792a4c89447e",
+    "name": "Power standard deviation",
+    "label": "Within-interval variability",
+    "order": 4,
+    "width": 6,
+    "height": 1,
+    "format": "{{msg.payload}}",
+    "layout": "row-spread",
+    "style": false,
+    "font": "Helvetica, sans-serif",
+    "fontSize": 16,
+    "color": "#344054",
+    "wrapText": true,
+    "className": "",
+    "value": "payload",
+    "valueType": "msg",
+    "x": 900,
+    "y": 580,
+    "wires": []
+  },
+  {
+    "id": "36e083fb31ac4e53",
+    "type": "ui-text",
+    "z": "e645f300346a4657",
+    "group": "f683792a4c89447e",
+    "name": "Occupancy fraction",
+    "label": "Occupancy",
+    "order": 5,
+    "width": 6,
+    "height": 1,
+    "format": "{{msg.payload}}",
+    "layout": "row-spread",
+    "style": false,
+    "font": "Helvetica, sans-serif",
+    "fontSize": 16,
+    "color": "#344054",
+    "wrapText": true,
+    "className": "",
+    "value": "payload",
+    "valueType": "msg",
+    "x": 900,
+    "y": 625,
+    "wires": []
+  },
+  {
+    "id": "062f645619b54e31",
+    "type": "ui-text",
+    "z": "e645f300346a4657",
+    "group": "b7203704f222496e",
+    "name": "Isolation Forest status",
+    "label": "Primary anomaly status",
+    "order": 1,
+    "width": 4,
+    "height": 1,
+    "format": "{{msg.payload}}",
+    "layout": "row-spread",
+    "style": false,
+    "font": "Helvetica, sans-serif",
+    "fontSize": 16,
+    "color": "#344054",
+    "wrapText": true,
+    "className": "",
+    "value": "payload",
+    "valueType": "msg",
+    "x": 900,
+    "y": 445,
+    "wires": []
+  },
+  {
+    "id": "7eebd2e66d4d4f9a",
+    "type": "ui-text",
+    "z": "e645f300346a4657",
+    "group": "b7203704f222496e",
+    "name": "Isolation Forest score",
+    "label": "Score, threshold and model",
+    "order": 2,
+    "width": 8,
+    "height": 1,
+    "format": "{{msg.payload}}",
+    "layout": "row-spread",
+    "style": false,
+    "font": "Helvetica, sans-serif",
+    "fontSize": 16,
+    "color": "#344054",
+    "wrapText": true,
+    "className": "",
+    "value": "payload",
+    "valueType": "msg",
+    "x": 900,
+    "y": 490,
+    "wires": []
+  },
+  {
+    "id": "9644628cdee3400f",
+    "type": "ui-text",
+    "z": "e645f300346a4657",
+    "group": "b7203704f222496e",
+    "name": "Robust baseline",
+    "label": "Secondary comparator",
+    "order": 3,
+    "width": 8,
+    "height": 1,
+    "format": "{{msg.payload}}",
+    "layout": "row-spread",
+    "style": false,
+    "font": "Helvetica, sans-serif",
+    "fontSize": 16,
+    "color": "#344054",
+    "wrapText": true,
+    "className": "",
+    "value": "payload",
+    "valueType": "msg",
+    "x": 900,
+    "y": 535,
+    "wires": []
+  },
+  {
+    "id": "1cd51364240d4b33",
+    "type": "ui-table",
+    "z": "e645f300346a4657",
+    "group": "1b7ae57c6bad43cf",
+    "name": "Recent anomaly review candidates",
+    "label": "Recent Anomaly Events (primary model)",
+    "order": 1,
+    "width": 12,
+    "height": 7,
+    "maxrows": 20,
+    "passthru": false,
+    "autocols": false,
+    "showSearch": true,
+    "deselect": true,
+    "selectionType": "none",
+    "columns": [
+      {
+        "key": "timestamp",
+        "keyType": "key",
+        "title": "Source timestamp",
+        "type": "text",
+        "width": "190px"
+      },
+      {
+        "key": "site_id",
+        "keyType": "key",
+        "title": "Site",
+        "type": "text",
+        "width": "100px"
+      },
+      {
+        "key": "meter_id",
+        "keyType": "key",
+        "title": "Meter",
+        "type": "text",
+        "width": "130px"
+      },
+      {
+        "key": "score",
+        "keyType": "key",
+        "title": "Score",
+        "type": "text",
+        "width": "90px"
+      },
+      {
+        "key": "threshold",
+        "keyType": "key",
+        "title": "Threshold",
+        "type": "text",
+        "width": "90px"
+      },
+      {
+        "key": "model_variant",
+        "keyType": "key",
+        "title": "Model variant",
+        "type": "text",
+        "width": "130px"
+      },
+      {
+        "key": "explanation",
+        "keyType": "key",
+        "title": "Explanation",
+        "type": "text",
+        "width": "500px"
+      }
+    ],
+    "mobileBreakpoint": "sm",
+    "mobileBreakpointType": "defaults",
+    "action": "replace",
+    "className": "",
+    "x": 900,
+    "y": 620,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "27999503a19c4a9b",
+    "type": "ui-text",
+    "z": "e645f300346a4657",
+    "group": "f07d102b06f14a19",
+    "name": "Broker connection",
+    "label": "MQTT broker",
+    "order": 1,
+    "width": 12,
+    "height": 1,
+    "format": "{{msg.payload}}",
+    "layout": "row-spread",
+    "style": false,
+    "font": "Helvetica, sans-serif",
+    "fontSize": 16,
+    "color": "#344054",
+    "wrapText": true,
+    "className": "",
+    "value": "payload",
+    "valueType": "msg",
+    "x": 900,
+    "y": 445,
+    "wires": []
+  },
+  {
+    "id": "011d4f5429874b5b",
+    "type": "comment",
+    "z": "e645f300346a4657",
+    "name": "Readings are historical replay; prediction status stays pending until correlated. Broker connection does not prove ML service health.",
+    "info": "The flow preserves source ECO timestamps as timezone-naive labels and bounds its chart/cache/event history.",
+    "x": 550,
+    "y": 80,
+    "wires": []
+  },
+  {
+    "id": "8c2544c4fb504c15",
+    "type": "inject",
+    "z": "e645f300346a4657",
+    "name": "Initial connection state",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": true,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 200,
+    "y": 400,
+    "wires": [
+      [
+        "38320caa2cf54652"
+      ]
+    ]
+  }
+]
